@@ -1,13 +1,12 @@
 package main
 
-
 import (
 	"./lib/commands"
 	"./lib/config"
+	"./lib/speech"
 	"fmt"
 	"github.com/bwmarrin/discordgo"
 )
-
 
 func main() {
 
@@ -31,6 +30,9 @@ func main() {
 		fmt.Println("error opening connection,", err)
 		return
 	}
+
+	// Entry Speech
+	speech.Entry(discord)
 
 	<-make(chan struct{})
 	return

@@ -1,6 +1,7 @@
 package commands
 
 import (
+	"../tools"
 	"fmt"
 	"github.com/bwmarrin/discordgo"
 )
@@ -33,33 +34,42 @@ func Answers(s *discordgo.Session, m *discordgo.MessageCreate) {
 	}
 
 	// Search for table flips
-	if stringInSlice(m.Content, tables) {
-		if flipCount == 3 {
-			escapeFlip(s, m)
-			flipCount = 0
-			return
-		}
-
+	if tools.StringInSlice(m.Content, tables) {
 		tableFlip(s, m)
-		flipCount++
 		return
+	}
+
+	message := checkQuote(m.Content)
+
+	if message != "" {
+		s.ChannelMessageSend(m.ChannelID, message)
 	}
 }
 
 // Respond with the right table flip
 func tableFlip(s *discordgo.Session, m *discordgo.MessageCreate) {
-	_, _ = s.ChannelMessageSend(m.ChannelID, "┬──┬ ノ( ゜-゜ノ) Don't hate on tables!")
+	s.ChannelMessageSend(m.ChannelID, "┻━┻ ︵ヽ(`Д´)ﾉ︵ ┻━┻ You! This is an act of war, I shall protect this realm!")
 }
 
-func escapeFlip(s *discordgo.Session, m *discordgo.MessageCreate) {
-	_, _ = s.ChannelMessageSend(m.ChannelID, "ﾐ┻┻(ﾉ>｡<)ﾉ He's mad!!")
-}
+func checkQuote(a string) string {
 
-func stringInSlice(a string, list []string) bool {
-	for _, b := range list {
-		if b == a {
-			return true
+	quotes := []struct {
+		quote    string
+		response string
+	}{
+		{"You are a vain, greedy, cruel boy!", "And you are an old man and a fool!"},
+		{"Describe exactly what happened to you last night.", "Your ancestors called it magic... *skims through a book on Norse mythology* ...but you call it science. I come from a land where they are one and the same."},
+		{"Keeping the bridge open would unleash the full power of the Bifrost and destroy Jotunheim, with you on it.", "I have no plans to die today."},
+		{"We don't have horses. Just dogs, cats, birds.", "Then give me one of those large enough to ride."},
+		{"NO! I'll die a warrior's death! Stories will be told of this day!", "Live, and tell those stories yourself!"},
+		{"What happened?", "We're fine! We drank, we fought - we made our ancestors proud!"},
+	}
+
+	for _, command := range quotes {
+		if command.quote == a {
+			return command.response
 		}
 	}
-	return false
+
+	return ""
 }

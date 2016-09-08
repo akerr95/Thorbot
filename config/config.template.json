@@ -2,6 +2,7 @@
   "application": {
     "email": "",
     "password": "",
-    "token": ""
+    "token": "",
+    "debug": false
   }
 }
